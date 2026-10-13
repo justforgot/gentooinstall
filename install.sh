@@ -1,0 +1,127 @@
+#!/bin/bash 
+
+#THIS SCRIPT INSTALLS GENTOO TO ANY PARTITION MOUNTED ON
+#/mnt/gentoo AND /mnt/gentoo/efi THESE MUST BE FORMATTED
+#Requirements:
+#Gentoo LiveGUI, 2 Partitions Mounted to /mnt/gentoo and
+#/mnt/gentoo/efi, good music, and a computer.
+#Target root partition must be formatted with xfs.
+#This script theoretically works on any linux distro with
+#chronyd,wget, tar, and the bash shell installed.
+#This script uses grub and installs the dist-kernel by
+#default.
+#Installing gentoo using the official documentation is suggested
+#as if you do not, you will have no idea how to manage the system
+#after the installation.
+echo “STARTING”
+
+echo “Syncing time using chronyd”
+chronyd -q
+#Syncing time is not required, this line can be removed if time
+#has already been set on the host.
+
+echo “Entering mounted root partition”
+cd /mnt/gentoo
+echo “Downloading stage file with wget”
+wget https://distfiles.gentoo.org/releases/amd64/autobuilds/20261011T170049Z/stage3-amd64-desktop-openrc-20261011T170049Z.tar.xz
+
+echo “Extracting the stage file to /mnt/gentoo”
+tar xpvf stage3-*.tar.xz --xattrs-include='*.*' --numeric-owner -C /mnt/gentoo 
+
+echo “Removing remnants of the stage tarball”
+rm stage3-*.tar.xz
+
+echo “Removing the old make.conf…”
+rm /mnt/gentoo/etc/portage/make.conf
+
+echo “Inserting the new make.conf”
+cat << 'EOF' > /mnt/gentoo/etc/portage/make.conf
+#These settings were set by the installation script you used.
+#Please consult /usr/share/portage/config/make.conf.example for a more
+#detailed example.
+
+# Compiler flags to set for all languages
+COMMON_FLAGS="-march=native -O2 -pipe"
+# Use the same settings for both variables
+CFLAGS="${COMMON_FLAGS}"
+CXXFLAGS="${COMMON_FLAGS}"
+FCFLAGS="${COMMON_FLAGS}"
+FFLAGS="${COMMON_FLAGS}"
+RUSTFLAGS="${RUSTFLAGS} -C target-cpu=native"
+
+#Default USE flags set by installer:
+USE=”-systemd bindist dist-kernel xfs stack-realign networkmanager grub”
+
+#Default value for gpu drivers set by installer:
+VIDEO_CARDS=”nouveau intel i915 virgl amdgpu radeonsi”
+
+#Default build options set by installer:
+EMERGE_DEFAULT_OPTS=”quiet-build=y --complete-graph --with-bdeps=y”
+
+#Default license variable set by installer:
+ACCEPT_LICENSE=”*”
+
+#Default mirror set by installer:
+GENTOO_MIRRORS=”http://distfiles.gentoo.org”
+
+#NOTE: This stage was built with the bindist USE flag enabled
+
+#This sets the language of build output to English.
+#Please keep this setting intact when reporting bugs.
+LC_MESSAGES=C.UTF-8
+EOF
+
+echo “Copying DNS info”
+cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
+
+echo “Entering chroot, configuring locales, setting up portage,”
+echo “installing grub, kernel, firmware, networkmanager, and”
+echo “configuring fstab.”
+arch-chroot /mnt/gentoo << 'EOF'
+
+#Configuring locales
+echo “en_US.UTF-8 UTF-8” >> /etc/locale.gen
+locale-gen
+eselect locale set 4
+env-update && source /etc/profile
+
+#setting password
+echo "username:gentoo" | chpasswd
+
+
+#Setting up portage
+emerge-webrsync
+emerge --sync --quiet
+
+#Installing Grub, Kernel, Firmware
+emerge —nodeps linux-firmware
+
+#Installing networkmanager and adding it to default runlevel
+emerge networkmanager
+rc-update add NetworkManager default
+
+#Installing genfstab
+emerge -1 sys-fs/genfstab
+
+#dbus bs
+dbus-uuidgen --ensure=/etc/machine-id
+#Hostname
+echo gengooner > /etc/hostname
+echo "127.0.0.1 gengooner" >> /etc/hosts
+
+#Installing and enabling system tools
+emerge net-misc/chrony
+rc-update add chronyd default
+emerge sys-block/io-scheduler-udev-rules
+
+#Installing grub
+grub-install --target=x86_64-efi --efi-directory=/efi --removable
+grub-mkconfig -o /boot/grub/grub.cfg
+EOF
+
+echo “Generating fstab”
+genfstab -U /mnt/gentoo >> /mnt/gentoo/etc/fstab
+
+echo “Exit chroot, the install is complete.”
+echo “Once the new system has booted, please set hostname in /etc/hosts and /etc/hostname, along with a new root password, the default is ‘gentoo’”
+echo “Installing app-portage/gentoolkit, is heavily suggested.”
