@@ -56,7 +56,7 @@ USE="-systemd bindist dist-kernel xfs stack-realign networkmanager grub"
 VIDEO_CARDS="nouveau intel i915 virgl amdgpu radeonsi"
 
 #Default build options set by installer:
-EMERGE_DEFAULT_OPTS="quiet-build=y --complete-graph --with-bdeps=y"
+EMERGE_DEFAULT_OPTS="--quiet-build=y --complete-graph --with-bdeps=y"
 
 #Default license variable set by installer:
 ACCEPT_LICENSE="*"
