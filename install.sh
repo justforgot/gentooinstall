@@ -79,44 +79,44 @@ echo “installing grub, kernel, firmware, networkmanager, and”
 echo “configuring fstab.”
 arch-chroot /mnt/gentoo << 'EOF'
 
-#Configuring locales
-echo “en_US.UTF-8 UTF-8” >> /etc/locale.gen
-locale-gen
-eselect locale set 4
-env-update && source /etc/profile
+  #Configuring locales
+  echo “en_US.UTF-8 UTF-8” >> /etc/locale.gen
+  locale-gen
+  eselect locale set 4
+  env-update && source /etc/profile
 
-#setting password
-echo "username:gentoo" | chpasswd
+  #setting password
+  echo "username:gentoo" | chpasswd
 
 
-#Setting up portage
-emerge-webrsync
-emerge --sync --quiet
+  #Setting up portage
+  emerge-webrsync
+  emerge --sync --quiet
 
-#Installing Grub, Kernel, Firmware
-emerge —nodeps linux-firmware
+  #Installing Grub, Kernel, Firmware
+  emerge —nodeps linux-firmware
 
-#Installing networkmanager and adding it to default runlevel
-emerge networkmanager
-rc-update add NetworkManager default
+  #Installing networkmanager and adding it to default runlevel
+  emerge networkmanager
+  rc-update add NetworkManager default
 
-#Installing genfstab
-emerge -1 sys-fs/genfstab
+  #Installing genfstab
+  emerge -1 sys-fs/genfstab
 
-#dbus bs
-dbus-uuidgen --ensure=/etc/machine-id
-#Hostname
-echo gengooner > /etc/hostname
-echo "127.0.0.1 gengooner" >> /etc/hosts
+  #dbus bs
+  dbus-uuidgen --ensure=/etc/machine-id
+  #Hostname
+  echo gengooner > /etc/hostname
+  echo "127.0.0.1 gengooner" >> /etc/hosts
 
-#Installing and enabling system tools
-emerge net-misc/chrony
-rc-update add chronyd default
-emerge sys-block/io-scheduler-udev-rules
+  #Installing and enabling system tools
+  emerge net-misc/chrony
+  rc-update add chronyd default
+  emerge sys-block/io-scheduler-udev-rules
 
-#Installing grub
-grub-install --target=x86_64-efi --efi-directory=/efi --removable
-grub-mkconfig -o /boot/grub/grub.cfg
+  #Installing grub
+  grub-install --target=x86_64-efi --efi-directory=/efi --removable
+  grub-mkconfig -o /boot/grub/grub.cfg
 EOF
 
 echo “Generating fstab”
