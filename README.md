@@ -1,4 +1,4 @@
-#gentooinstall
+# gentooinstall
 
 THIS SCRIPT INSTALLS GENTOO TO ANY PARTITION MOUNTED ON /mnt/gentoo AND /mnt/gentoo/efi THESE MUST BE FORMATTED.
 
