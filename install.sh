@@ -71,6 +71,11 @@ GENTOO_MIRRORS="http://distfiles.gentoo.org"
 LC_MESSAGES=C.UTF-8
 EOF
 
+echo "Setting CPU flags"
+emerge --sync --quiet
+emerge -1 app-portage/cpuid2cpuflags
+echo "$(cpuid2cpuflags)" > /mnt/gentoo/etc/portage/package.use/00cpu-flags
+
 echo "Copying DNS info"
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
@@ -82,10 +87,6 @@ echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 eselect locale set 4
 env-update && source /etc/profile
-
-echo "Setting CPU flags"
-emerge -1 app-portage/cpuid2cpuflags
-echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 
 echo "Setting dracut local flag for installkernel"
 echo "sys-kernel/installkernel dracut" >> /etc/portage/package.use/installkernel
