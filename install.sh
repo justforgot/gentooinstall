@@ -74,47 +74,45 @@ EOF
 echo "Copying DNS info"
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
-echo "Entering chroot, configuring locales, setting up portage,"
-echo "installing grub, kernel, firmware, networkmanager, and"
-echo "configuring fstab."
+echo "Entering chroot"
 arch-chroot /mnt/gentoo << 'EOF'
 
-#Configuring locales
+echo "Configuring locales"
 echo "en_US.UTF-8 UTF-8" >> /etc/locale.gen
 locale-gen
 eselect locale set 4
 env-update && source /etc/profile
 
-#setting password
+echo "Setting password"
 echo "username:gentoo" | chpasswd
 
 
-#Setting up portage
+echo "Setting up portage"
 emerge-webrsync
 emerge --sync --quiet
 
-#Installing Grub, Kernel, Firmware
+echo "Installing Grub, Kernel, and Firmware"
 emerge —nodeps linux-firmware
 
-#Installing networkmanager and adding it to default runlevel
+echo "Installing networkmanager and adding it to default runlevel"
 emerge networkmanager
 rc-update add NetworkManager default
 
-#Installing genfstab
+echo "Installing genfstab"
 emerge -1 sys-fs/genfstab
 
-#dbus bs
+echo "Setting up dbus"
 dbus-uuidgen --ensure=/etc/machine-id
-#Hostname
+echo "Setting hostname"
 echo gengooner > /etc/hostname
 echo "127.0.0.1 gengooner" >> /etc/hosts
 
-#Installing and enabling system tools
+echo "Installing and enabling system tools"
 emerge net-misc/chrony
 rc-update add chronyd default
 emerge sys-block/io-scheduler-udev-rules
 
-#Installing grub
+echo "Installing grub"
 grub-install --target=x86_64-efi --efi-directory=/efi --removable
 grub-mkconfig -o /boot/grub/grub.cfg
 EOF
