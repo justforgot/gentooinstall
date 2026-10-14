@@ -5,7 +5,7 @@ THIS SCRIPT INSTALLS GENTOO TO ANY PARTITION MOUNTED ON /mnt/gentoo AND /mnt/gen
 Requirements:
 Gentoo installation media, 2 Partitions Mounted to /mnt/gentoo and /mnt/gentoo/efi respectively, good music, and a computer. Target root partition must be formatted with xfs and efi must be formatted with fat32 or exfat.
 
-Target root partition must be at least 10GB to comfortably install, and the efi partition must be at least 256MB.
+Target root partition must be at least 32GB to comfortably install, and the efi partition must be at least 256MB.
 
 This script theoretically works on any linux distro with chronyd, wget, tar, arch-chroot, and the bash shell installed. 
 
