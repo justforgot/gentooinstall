@@ -3,7 +3,7 @@
 #THIS SCRIPT INSTALLS GENTOO TO ANY PARTITION MOUNTED ON
 #/mnt/gentoo AND /mnt/gentoo/efi THESE MUST BE FORMATTED
 #Requirements:
-#Gentoo LiveGUI, 2 Partitions Mounted to /mnt/gentoo and
+#Gentoo installation media, 2 Partitions Mounted to /mnt/gentoo and
 #/mnt/gentoo/efi, good music, and a computer.
 #Target root partition must be formatted with xfs.
 #This script theoretically works on any linux distro with
@@ -128,5 +128,5 @@ echo "Generating fstab"
 genfstab -U /mnt/gentoo >> /mnt/gentoo/etc/fstab
 
 echo 'Exit chroot, the install is almost complete. Please run the command "arch-chroot /mnt/gentoo" and then set your password ussing the "passwd" command.'
-echo "Once the new system has booted, please set hostname in /etc/hosts and /etc/hostname, along with a new root password, the default is 'gentoo'"
+echo "Once the new system has booted, please set hostname in /etc/hosts and /etc/hostname, along with a new root password, the default is 'localhost'"
 echo "Installing app-portage/gentoolkit, is heavily suggested."
