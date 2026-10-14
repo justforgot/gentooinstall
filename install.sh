@@ -50,7 +50,7 @@ FFLAGS="${COMMON_FLAGS}"
 RUSTFLAGS="${RUSTFLAGS} -C target-cpu=native"
 
 #Default USE flags set by installer:
-USE="-systemd bindist dist-kernel xfs stack-realign networkmanager grub firmware"
+USE="-systemd bindist dist-kernel xfs stack-realign networkmanager grub"
 
 #Default value for gpu drivers set by installer:
 VIDEO_CARDS="nouveau intel i915 virgl amdgpu radeonsi"
@@ -99,6 +99,7 @@ emerge --sync --quiet
 
 echo "Installing Grub, Kernel, and Firmware"
 emerge sys-kernel/gentoo-kernel-bin
+emerge sys-kernel/linux-firmware
 
 echo "Installing networkmanager and adding it to default runlevel"
 emerge networkmanager
