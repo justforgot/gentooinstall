@@ -90,6 +90,11 @@ echo "Setting up portage"
 emerge-webrsync
 emerge --sync --quiet
 
+
+echo "Setting CPU flags"
+emerge -1 app-portage/cpuid2cpuflags
+echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+
 echo "Installing Grub, Kernel, and Firmware"
 emerge sys-kernel/gentoo-kernel
 emerge sys-kernel/linux-firmware
