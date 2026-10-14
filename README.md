@@ -2,6 +2,8 @@
 
 THIS SCRIPT INSTALLS GENTOO TO ANY PARTITION MOUNTED ON /mnt/gentoo AND /mnt/gentoo/efi THESE MUST BE FORMATTED.
 
+Run this script while logged in as the root user, this can be done by running the command "sudo -i" on all gentoo installation media.
+
 Requirements:
 Gentoo installation media, 2 Partitions Mounted to /mnt/gentoo and /mnt/gentoo/efi respectively, good music, and a computer. Target root partition must be formatted with xfs and efi must be formatted with fat32 or exfat.
 
