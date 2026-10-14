@@ -98,7 +98,7 @@ emerge-webrsync
 emerge --sync --quiet
 
 echo "Installing Grub, Kernel, and Firmware"
-emerge sys-kernel/gentoo-kernel-bin
+emerge sys-kernel/gentoo-kernel
 emerge sys-kernel/linux-firmware
 
 echo "Installing networkmanager and adding it to default runlevel"
