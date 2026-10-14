@@ -90,6 +90,9 @@ echo "Setting CPU flags"
 emerge -1 app-portage/cpuid2cpuflags
 echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 
+echo "Setting dracut local flag for installkernel"
+echo "sys-kernel/installkernel dracut" >> /etc/portage/package.use/installkernel
+
 echo "Setting up portage"
 emerge-webrsync
 emerge --sync --quiet
