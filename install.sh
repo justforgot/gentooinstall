@@ -86,6 +86,9 @@ env-update && source /etc/profile
 echo "Setting password"
 echo "username:gentoo" | chpasswd
 
+echo "Setting CPU flags"
+emerge -1 app-portage/cpuid2cpuflags
+echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
 
 echo "Setting up portage"
 emerge-webrsync
@@ -115,6 +118,9 @@ emerge sys-block/io-scheduler-udev-rules
 echo "Installing grub"
 grub-install --target=x86_64-efi --efi-directory=/efi --removable
 grub-mkconfig -o /boot/grub/grub.cfg
+
+echo "Updating packages to match USE flags set by new profile and make.conf"
+
 EOF
 
 echo "Generating fstab"
