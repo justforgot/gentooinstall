@@ -111,8 +111,8 @@ emerge -1 sys-fs/genfstab
 echo "Setting up dbus"
 dbus-uuidgen --ensure=/etc/machine-id
 echo "Setting hostname"
-echo gengooner > /etc/hostname
-echo "127.0.0.1 gengooner" >> /etc/hosts
+echo "localhost" >> /etc/hostname
+echo "127.0.0.1 localhost" >> /etc/hosts
 
 echo "Installing and enabling system tools"
 emerge net-misc/chrony
