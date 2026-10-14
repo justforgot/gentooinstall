@@ -3,7 +3,7 @@
 THIS SCRIPT INSTALLS GENTOO TO ANY PARTITION MOUNTED ON /mnt/gentoo AND /mnt/gentoo/efi THESE MUST BE FORMATTED.
 
 Requirements:
-Gentoo LiveGUI, 2 Partitions Mounted to /mnt/gentoo and /mnt/gentoo/efi respectively, good music, and a computer. Target root partition must be formatted with xfs and efi must be formatted with fat32 or exfat.
+Gentoo installation media, 2 Partitions Mounted to /mnt/gentoo and /mnt/gentoo/efi respectively, good music, and a computer. Target root partition must be formatted with xfs and efi must be formatted with fat32 or exfat.
 
 This script theoretically works on any linux distro with chronyd, wget, tar, arch-chroot, and the bash shell installed. 
 
