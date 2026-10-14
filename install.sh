@@ -83,9 +83,6 @@ locale-gen
 eselect locale set 4
 env-update && source /etc/profile
 
-echo "Setting password"
-echo "username:gentoo" | chpasswd
-
 echo "Setting CPU flags"
 emerge -1 app-portage/cpuid2cpuflags
 echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
