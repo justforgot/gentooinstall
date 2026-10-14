@@ -71,11 +71,6 @@ GENTOO_MIRRORS="http://distfiles.gentoo.org"
 LC_MESSAGES=C.UTF-8
 EOF
 
-echo "Setting CPU flags"
-emerge --sync --quiet
-emerge -1 app-portage/cpuid2cpuflags
-echo "*/* $(cpuid2cpuflags)" > /mnt/gentoo/etc/portage/package.use/00cpu-flags
-
 echo "Copying DNS info"
 cp --dereference /etc/resolv.conf /mnt/gentoo/etc/
 
