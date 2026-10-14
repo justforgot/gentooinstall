@@ -125,6 +125,8 @@ EOF
 echo "Generating fstab"
 genfstab -U /mnt/gentoo >> /mnt/gentoo/etc/fstab
 
+echo "Enter password for new system:"
+
 echo 'Exit chroot, the install is almost complete. Please run the command "arch-chroot /mnt/gentoo" and then set your password ussing the "passwd" command.'
 echo "Once the new system has booted, please set hostname in /etc/hosts and /etc/hostname, along with a new root password, the default is 'localhost'"
 echo "Installing app-portage/gentoolkit, is heavily suggested."
