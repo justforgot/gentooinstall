@@ -120,7 +120,7 @@ grub-install --target=x86_64-efi --efi-directory=/efi --removable
 grub-mkconfig -o /boot/grub/grub.cfg
 
 echo "Updating packages to match USE flags set by new profile and make.conf"
-emerge --ask --verbose --update --deep --changed-use @world
+emerge --verbose --update --deep --changed-use @world
 EOF
 
 echo "Generating fstab"
