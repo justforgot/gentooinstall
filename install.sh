@@ -90,6 +90,11 @@ echo "Setting up portage"
 emerge-webrsync
 emerge --sync --quiet
 
+
+echo "Setting CPU flags"
+emerge -1 app-portage/cpuid2cpuflags
+echo "*/* $(cpuid2cpuflags)" > /etc/portage/package.use/00cpu-flags
+
 echo "Installing Grub, Kernel, and Firmware"
 emerge sys-kernel/gentoo-kernel
 emerge sys-kernel/linux-firmware
@@ -119,6 +124,12 @@ EOF
 
 echo "Generating fstab"
 genfstab -U /mnt/gentoo >> /mnt/gentoo/etc/fstab
+
+#Prompt for root password
+#echo "Enter password for new system:"
+#read ROOT_PASS
+#Set root password
+#echo "root:{ROOT_PASS}" | chroot /mnt/gentoo chpasswd
 
 echo 'Exit chroot, the install is almost complete. Please run the command "arch-chroot /mnt/gentoo" and then set your password ussing the "passwd" command.'
 echo "Once the new system has booted, please set hostname in /etc/hosts and /etc/hostname, along with a new root password, the default is 'localhost'"
