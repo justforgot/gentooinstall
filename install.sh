@@ -1,6 +1,6 @@
 #!/bin/bash
 
-printf "STARTING justforgot/gentooinstall SCRIPT v1.1 r26!!\n\n\n"
+printf "STARTING justforgot/gentooinstall SCRIPT v1.1 r27!!\n\n\n"
 
 # error handler that prints the failed line number in this script
 set -eE
@@ -36,6 +36,7 @@ SUBDIRS=(
     "current-stage3-amd64-hardened-openrc"
     "current-stage3-amd64-hardened-systemd"
 )
+# this skips fetching gentoo.org for the stage files if we find one or couple in the current working directory
 mapfile -t stages < <(
     ls -1v stage3-*.tar.xz 2>/dev/null ||
     (
@@ -185,6 +186,9 @@ env-update
 
 set -eE
 die() { printf "\nERROR (chroot): %s\n" "$*" >&2; exit 1; }
+# installkernel names the kernel image differently depending on its layout (the grub layout makes
+# /boot/kernel-<ver>, others make vmlinuz-<ver> or vmlinux-<ver>) so accept any of them
+have_kernel() { compgen -G '/boot/vmlinuz-*' > /dev/null || compgen -G '/boot/vmlinux-*' > /dev/null || compgen -G '/boot/kernel-*' > /dev/null; }
 trap 'rc=$?; printf "\nERROR (chroot): command failed at line %s (exit code %s)\n" "$LINENO" "$rc" >&2' ERR
 
 : "${BOOTLOADER:?}" "${NM_PACKAGE:?}" "${INIT_SYSTEM:?}"
@@ -233,17 +237,17 @@ grep -qxF "sys-kernel/gentoo-kernel kernel-makeopts.conf" /etc/portage/package.e
 printf "Installing linux-firmware (before the kernel so the initramfs can use it)\n"
 emerge sys-kernel/linux-firmware
 
-printf "Installing gentoo-kernel with restricted parallel jobs\n"
+printf "Installing gentoo-kernel (with reduced job count to avoid kills)\n"
 emerge sys-kernel/gentoo-kernel
 
 # check if the kernel was actually installed correctly, and reconfiguring it if it wasnt
-if ! ls /boot/vmlinuz-* > /dev/null 2>&1; then
+if ! have_kernel; then
     printf "No kernel in /boot yet, asking gentoo-kernel to redeploy it...\n"
     emerge --config sys-kernel/gentoo-kernel || true
 fi
 
 # sanity check for the kernel image and initramfs actually existing, the installed gentoo will not be bootable if they dont exist
-ls /boot/vmlinuz-* > /dev/null 2>&1 || die "No kernel image (/boot/vmlinuz-*) after installing gentoo-kernel. Check the emerge output above. If /boot is a separate partition it must be mounted at /mnt/gentoo/boot before running this script."
+have_kernel || die "No kernel image (/boot/vmlinuz-*, vmlinux-* or kernel-*) after installing gentoo-kernel. Check the emerge output above. If /boot is a separate partition it must be mounted at /mnt/gentoo/boot before running this script."
 ls /boot/initramfs-* > /dev/null 2>&1 || printf "WARNING: no initramfs found in /boot. The system may not boot if root needs one.\n"
 
 printf "Installing network manager\n"
@@ -273,7 +277,7 @@ printf "Installing bootloader: $BOOTLOADER\n"
 emerge sys-boot/grub
 grub-install --target=x86_64-efi --efi-directory=/efi --bootloader-id=gentoo --recheck
 grub-mkconfig -o /boot/grub/grub.cfg
-grep -q 'vmlinuz' /boot/grub/grub.cfg || die "grub.cfg contains no kernel entries. Check that /boot/vmlinuz-* exists and re-run grub-mkconfig."
+grep -qE '^[[:space:]]*linux(efi)?[[:space:]]' /boot/grub/grub.cfg || die "grub.cfg contains no kernel entries (no 'linux' lines). Check that a kernel exists in /boot and re-run grub-mkconfig."
 
 printf "Updating world with new USE flags\n"
 emerge --verbose --update --deep --changed-use @world
@@ -292,7 +296,7 @@ if [ "$FSTAB_GEN" = "genfstab" ]; then
     genfstab -U /mnt/gentoo >> /mnt/gentoo/etc/fstab
 fi
 
-# THE DEFAULT USERNAME AND PASSWORD ARE "gentoo", YOU MUST CHANGE THE PASSWORD AFTER INSTALLATION!!!!!!!
+# THE DEFAULT PASSWORD FOR USER root IS gentoo, YOU MUST CHANGE THE PASSWORD AFTER INSTALLATION!!!!!!!
 printf "\n\nSetting root password (default: gentoo)\n"
 arch-chroot /mnt/gentoo passwd <<EOF
 gentoo
