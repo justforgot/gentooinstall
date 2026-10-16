@@ -1,5 +1,4 @@
 #!/bin/bash 
-
 #THIS SCRIPT INSTALLS GENTOO TO ANY PARTITION MOUNTED ON
 #/mnt/gentoo AND /mnt/gentoo/efi THESE MUST BE FORMATTED
 #Requirements:
@@ -13,6 +12,14 @@
 #Installing gentoo using the official documentation is suggested
 #as if you do not, you will have no idea how to manage the system
 #after the installation.
+
+# error handler that prints the failed line number in this script
+set -eE
+die() { printf "\nERROR: %s\n" "$*" >&2; exit 1; }
+trap 'rc=$?; printf "\nERROR: command failed at line %s (exit code %s)\n" "$LINENO" "$rc" >&2' ERR
+
+
+
 echo "STARTING"
 
 echo "Syncing time using chronyd"
